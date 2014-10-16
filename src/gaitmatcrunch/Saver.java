@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Class to import and export data from database.
  */
 
 package gaitmatcrunch;
@@ -12,11 +11,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OptionalDataException;
-import java.util.Vector;
+import java.util.TreeSet;
 
 /**
  *
  * @author j4lingeman
+ * @edited Shohan Hasan
  */
 public class Saver {
     String file = "./gaitCrunchDatabase.db";
@@ -27,7 +27,7 @@ public class Saver {
         
     }
 
-    public Saver(Vector<Subject> subjects) {
+    public Saver(TreeSet<Subject> subjects) {
         ObjectOutputStream objOut;
         try{
             objOut = new ObjectOutputStream(new FileOutputStream(file));
@@ -40,9 +40,11 @@ public class Saver {
             
         }
     }
+    
+    /* Constructor using treesets. */
 
-    public Vector<Subject> Loader(String fileName) {
-        Vector<Subject> subjects = new Vector<Subject>();
+    public TreeSet<Subject> Loader(String fileName) {
+        TreeSet<Subject> subjects = new TreeSet<Subject>();
         //fileName = file;
         try{
             Object o = null;
