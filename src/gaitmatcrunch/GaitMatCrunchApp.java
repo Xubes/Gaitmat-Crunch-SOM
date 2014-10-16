@@ -4,7 +4,7 @@
 
 package gaitmatcrunch;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import org.jdesktop.application.Application;
 import org.jdesktop.application.SingleFrameApplication;
 
@@ -40,7 +40,7 @@ public class GaitMatCrunchApp extends SingleFrameApplication {
      * Main method launching the application.
      */
 
-    public Vector<Subject> mainSubjectList = new Vector<Subject>();
+    public ArrayList<Subject> mainSubjectList = new ArrayList<Subject>();
 
     public static void main(String[] args) {
         launch(GaitMatCrunchApp.class, args);

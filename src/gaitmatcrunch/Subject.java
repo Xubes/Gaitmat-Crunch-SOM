@@ -169,8 +169,9 @@ public class Subject implements Serializable, Comparable {
         }
     }
 
+    @Override
     public String toString() {
-        return "ID: " + this.id + " | Study: " + this.study;
+        return "Study: " + this.study + " | ID: " + this.id;
     }
 
     private int findObjectNum(int objNum, Walk w) {
@@ -183,12 +184,19 @@ public class Subject implements Serializable, Comparable {
     }
     
     /* Make subjects comparable. */
-    int compareTo(Subject other){
-        if(study.equals(other.study)){
-            return id.compareTo(other.id);
+    public int compareTo(Object other){
+        if(other instanceof Subject){
+            Subject osub = (Subject)other;
+            if(study.equals(osub.study)){
+                return id.compareTo(osub.id);
+            }
+            else{
+                return study.compareTo(osub.study);
+            }
         }
+        // handle illegal comparison.
         else{
-            return study.compareTo(other.study);
+            return -1;
         }
     }
 

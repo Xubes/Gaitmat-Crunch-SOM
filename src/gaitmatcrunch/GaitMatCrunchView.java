@@ -200,6 +200,7 @@ public class GaitMatCrunchView extends FrameView {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         mainPanel = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -355,6 +356,7 @@ public class GaitMatCrunchView extends FrameView {
 
         subjectNumList.setModel(subjectNumList.getModel());
         subjectNumList.setName("subjectNumList"); // NOI18N
+        subjectNumList.setNextFocusableComponent(walkList);
         subjectNumList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 subjectNumListValueChanged(evt);
@@ -369,6 +371,10 @@ public class GaitMatCrunchView extends FrameView {
 
         walkList.setModel(subjectNumList.getModel());
         walkList.setName("walkList"); // NOI18N
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, walkList, org.jdesktop.beansbinding.ObjectProperty.create(), walkList, org.jdesktop.beansbinding.BeanProperty.create("elements"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane2.setViewportView(walkList);
 
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
@@ -550,7 +556,7 @@ public class GaitMatCrunchView extends FrameView {
 
         saver = new Saver();
         subjectList = saver.Loader(dbFile);
-        subjectNumList.setListData(subjectList);
+        subjectNumList.setListData(subjectList.toArray());
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -1401,6 +1407,8 @@ public class GaitMatCrunchView extends FrameView {
         setComponent(mainPanel);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
+
+        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void addSubButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSubButMouseClicked
@@ -1484,7 +1492,7 @@ public class GaitMatCrunchView extends FrameView {
                 walkList.setSelectedIndex(walkList.getLastVisibleIndex());
             }
             else{
-                walkList.setListData(new ArrayList(DEFAULT_WALKLIST_SIZE));
+                walkList.setListData(new Walk[0]);
             }
             saver = new Saver(subjectList);
             addWalkDialog.setVisible(false);
@@ -1500,7 +1508,7 @@ public class GaitMatCrunchView extends FrameView {
         }
         else
         {
-            walkList.setListData(new Vector());
+            walkList.setListData(new Walk[0]);
         }
     }//GEN-LAST:event_subjectNumListValueChanged
 
@@ -1692,7 +1700,7 @@ public class GaitMatCrunchView extends FrameView {
 
     private void playCloseMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playCloseMouseReleased
         drawTime = 0;
-        points = new Vector<Point>();
+        points = new ArrayList<Point>();
         walkGraphic = new DrawPanel(drawTime);
         playDialog.setVisible(false);
     }//GEN-LAST:event_playCloseMouseReleased
@@ -1860,7 +1868,7 @@ public class GaitMatCrunchView extends FrameView {
     }//GEN-LAST:event_dumpSetButtonMouseClicked
 
     private void checkButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkButtonMouseClicked
-        Vector<String> flaggedWalks = new Vector<String>();
+        ArrayList<String> flaggedWalks = new ArrayList<String>();
 
         Exporter e;
         for(Subject s : subjectList) {
@@ -2066,6 +2074,7 @@ public class GaitMatCrunchView extends FrameView {
     private javax.swing.JList walkList;
     private javax.swing.JScrollPane walkScrollPane;
     private javax.swing.JFrame walkStats;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     private final Timer messageTimer;
