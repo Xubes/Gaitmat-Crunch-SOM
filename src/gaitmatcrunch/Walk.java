@@ -6,14 +6,14 @@
 package gaitmatcrunch;
 
 import java.io.Serializable;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
  * @author j4lingeman
  */
 public class Walk implements Serializable {
-    Vector<Footfall> walk;
+    ArrayList<Footfall> walk;
     String trialNum;
     double totalDoubleSupport, totalSingleSupport;
     double avgDoubleSupport, avgSingleSupport, totalFlight;
@@ -75,12 +75,12 @@ public class Walk implements Serializable {
 
     public Walk() {
         trialNum = "-1";
-        walk = new Vector<Footfall>();
+        walk = new ArrayList<Footfall>();
     }
 
     public Walk(String t) {
         trialNum = t;
-        walk = new Vector<Footfall>();
+        walk = new ArrayList<Footfall>();
     }
 
     public void addStep(Footfall f) {
@@ -91,6 +91,7 @@ public class Walk implements Serializable {
         return walk.get(i);
     }
 
+    @Override
     public String toString() {
         return String.valueOf(trialNum);
     }

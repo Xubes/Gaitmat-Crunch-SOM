@@ -16,7 +16,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Vector;
 import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
@@ -24,6 +23,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 /**
  * The application's main frame.
@@ -31,13 +31,16 @@ import java.util.ArrayList;
 
 public class GaitMatCrunchView extends FrameView {
 
-    Vector<Subject> subjectList = new Vector<Subject>();
-    Vector<String> subjectDisplay = new Vector<String>();
+    // Constants
+    static final int DEFAULT_WALKLIST_SIZE = 10;
+    //Vector<Subject> subjectList = new Vector<Subject>();
+    TreeSet<Subject> subjectList = new TreeSet<Subject>();
+    TreeSet<String> subjectDisplay = new TreeSet<String>();
     Saver saver;
     String dbFile = "./gaitCrunchDatabase.db";
     static int drawTime = 0;
     static double drawRT = 0;
-    static Vector<Point> points;
+    static ArrayList<Point> points;
 
     public GaitMatCrunchView(SingleFrameApplication app) {
         super(app);
@@ -99,9 +102,9 @@ public class GaitMatCrunchView extends FrameView {
         public DrawPanel(int numToDraw) {
             int i = 0;
             System.out.println("Entering draw panel constructor");
-            points = new Vector<Point>();
+            points = new ArrayList<Point>();
             if( (Walk) walkList.getSelectedValue() != null ) {
-                points = new Vector<Point>();
+                points = new ArrayList<Point>();
                 w = (Walk) walkList.getSelectedValue();
                 for(int j = 0; j < w.getLength(); j++)
                 {
@@ -197,6 +200,7 @@ public class GaitMatCrunchView extends FrameView {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         mainPanel = new javax.swing.JPanel();
         jTabbedPane1 = new javax.swing.JTabbedPane();
@@ -352,6 +356,7 @@ public class GaitMatCrunchView extends FrameView {
 
         subjectNumList.setModel(subjectNumList.getModel());
         subjectNumList.setName("subjectNumList"); // NOI18N
+        subjectNumList.setNextFocusableComponent(walkList);
         subjectNumList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
             public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
                 subjectNumListValueChanged(evt);
@@ -366,6 +371,10 @@ public class GaitMatCrunchView extends FrameView {
 
         walkList.setModel(subjectNumList.getModel());
         walkList.setName("walkList"); // NOI18N
+
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, walkList, org.jdesktop.beansbinding.ObjectProperty.create(), walkList, org.jdesktop.beansbinding.BeanProperty.create("elements"));
+        bindingGroup.addBinding(binding);
+
         jScrollPane2.setViewportView(walkList);
 
         jLabel3.setText(resourceMap.getString("jLabel3.text")); // NOI18N
@@ -547,7 +556,7 @@ public class GaitMatCrunchView extends FrameView {
 
         saver = new Saver();
         subjectList = saver.Loader(dbFile);
-        subjectNumList.setListData(subjectList);
+        subjectNumList.setListData(subjectList.toArray());
 
         menuBar.setName("menuBar"); // NOI18N
 
@@ -1398,6 +1407,8 @@ public class GaitMatCrunchView extends FrameView {
         setComponent(mainPanel);
         setMenuBar(menuBar);
         setStatusBar(statusPanel);
+
+        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
 
     private void addSubButMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_addSubButMouseClicked
@@ -1426,7 +1437,7 @@ public class GaitMatCrunchView extends FrameView {
 
             subjectList.add(s);
 
-            subjectNumList.setListData(subjectList);
+            subjectNumList.setListData(subjectList.toArray());
             subjectNumList.setSelectedIndex(subjectNumList.getLastVisibleIndex());
             saver = new Saver(subjectList);
             addSubject.setVisible(false);
@@ -1477,11 +1488,11 @@ public class GaitMatCrunchView extends FrameView {
             s.addWalkFromFile(fileName, addWalkNameText.getText());
             
             if(s.walks.size() > 0) {
-                walkList.setListData(s.walks);
+                walkList.setListData(s.walks.toArray());
                 walkList.setSelectedIndex(walkList.getLastVisibleIndex());
             }
             else{
-                walkList.setListData(new Vector());
+                walkList.setListData(new Walk[0]);
             }
             saver = new Saver(subjectList);
             addWalkDialog.setVisible(false);
@@ -1493,11 +1504,11 @@ public class GaitMatCrunchView extends FrameView {
     private void subjectNumListValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_subjectNumListValueChanged
         Subject s = (Subject)subjectNumList.getSelectedValue();
         if(s.walks.size() > 0) {
-            walkList.setListData(s.walks);
+            walkList.setListData(s.walks.toArray());
         }
         else
         {
-            walkList.setListData(new Vector());
+            walkList.setListData(new Walk[0]);
         }
     }//GEN-LAST:event_subjectNumListValueChanged
 
@@ -1526,7 +1537,7 @@ public class GaitMatCrunchView extends FrameView {
                     subjectList.remove((Subject)s);
                 }
                 //subjectList.remove((Subject)subjectNumList.getSelectedValue());
-                subjectNumList.setListData(subjectList);
+                subjectNumList.setListData(subjectList.toArray());
                 saver = new Saver(subjectList);
             }
         }
@@ -1543,7 +1554,7 @@ public class GaitMatCrunchView extends FrameView {
             if(returnVal == JOptionPane.OK_OPTION) {
                 Subject s = (Subject)subjectNumList.getSelectedValue();
                 s.walks.remove((Walk)walkList.getSelectedValue());
-                walkList.setListData(s.walks);
+                walkList.setListData(s.walks.toArray());
                 saver = new Saver(subjectList);
             }
         }
@@ -1640,7 +1651,7 @@ public class GaitMatCrunchView extends FrameView {
         if(ret == fc.APPROVE_OPTION)
         {
             subjectList = saver.Loader(fc.getSelectedFile().getAbsolutePath());
-            subjectNumList.setListData(subjectList);
+            subjectNumList.setListData(subjectList.toArray());
         }
     }//GEN-LAST:event_menuLoadDBMouseReleased
 
@@ -1689,7 +1700,7 @@ public class GaitMatCrunchView extends FrameView {
 
     private void playCloseMouseReleased(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_playCloseMouseReleased
         drawTime = 0;
-        points = new Vector<Point>();
+        points = new ArrayList<Point>();
         walkGraphic = new DrawPanel(drawTime);
         playDialog.setVisible(false);
     }//GEN-LAST:event_playCloseMouseReleased
@@ -1736,31 +1747,32 @@ public class GaitMatCrunchView extends FrameView {
                 continue;
             }
             
-            // process the filename
+            /* Process the filename.
+             * SOM naming conventions:
+             *  (study id)-(subject id)-(age group)-(trial #)
+             *  (study id)_(subject id)_(age group)_(trial #)
+             */
             sub = null;
             System.out.println(s);
 
-            fileArray = s.split("-");
-            
+            fileArray = s.contains("-")? s.split("-") : s.split("_");
+            int sz = fileArray.length;
             /* Check fileArray size to avoid oob err.
              * If there aren't at least 3 parts, add to list of bad files and continue.
              */
-            if(fileArray.length < 3){
+            if(sz < 4){
                 errs.add(s);
                 continue;
             }
-            trial = fileArray[fileArray.length - 1].toLowerCase().replace(".txt", "");
+            
+            // extract trial number.
+            trial = fileArray[sz - 1].toLowerCase().replace(".txt", "");
             // extract id number
-            id = fileArray[fileArray.length - 2];
+            id = fileArray[sz - 3];
             // extract study code
-            study = fileArray[fileArray.length - 3];
+            study = fileArray[sz - 4];
             System.out.printf("Study: %s, ID: %s, Trial: %s\n",study,id,trial);
-//            study = temp.substring(temp.length() - 2, temp.length());
-
-//            study = s.split("#")[0].substring(0, s.split("#")[0].length()-1);
-//            id = s.split("#")[1].split("-")[0];
-//            trial = s.split("-")[1].toLowerCase().replace(".txt", "");
-//            System.out.println(id + " " + study + " " + trial);
+            
             for (Subject j : subjectList) {
                 if (j.id.equals(id) && j.study.equals(study)) {
                     sub = j;
@@ -1775,7 +1787,7 @@ public class GaitMatCrunchView extends FrameView {
             System.out.println(dir.getPath() + s);
             sub.addWalkFromFile(dir.getPath() + "/" + s, trial);
         }
-        subjectNumList.setListData(subjectList);
+        subjectNumList.setListData(subjectList.toArray());
         saver = new Saver(subjectList);
         
         // Display a dialogue message box with filenames that could not be processed.
@@ -1856,7 +1868,7 @@ public class GaitMatCrunchView extends FrameView {
     }//GEN-LAST:event_dumpSetButtonMouseClicked
 
     private void checkButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkButtonMouseClicked
-        Vector<String> flaggedWalks = new Vector<String>();
+        ArrayList<String> flaggedWalks = new ArrayList<String>();
 
         Exporter e;
         for(Subject s : subjectList) {
@@ -2062,6 +2074,7 @@ public class GaitMatCrunchView extends FrameView {
     private javax.swing.JList walkList;
     private javax.swing.JScrollPane walkScrollPane;
     private javax.swing.JFrame walkStats;
+    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
 
     private final Timer messageTimer;

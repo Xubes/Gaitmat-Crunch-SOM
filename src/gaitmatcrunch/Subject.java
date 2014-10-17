@@ -11,25 +11,26 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.StringTokenizer;
-import java.util.Vector;
+import java.util.ArrayList;
 
 /**
  *
  * @author j4lingeman
+ * @edited Shohan Hasan
  */
-public class Subject implements Serializable {
+public class Subject implements Serializable, Comparable {
     String tdate, bdate, id, study;
-    Vector<Walk> walks;
+    ArrayList<Walk> walks;
 
 
     public Subject(String id) {
         this.id = id;
-        walks = new Vector<Walk>();
+        walks = new ArrayList<Walk>();
     }
 
     public Subject(){
         this.id = "Error: Unassigned";
-        walks = new Vector<Walk>();
+        walks = new ArrayList<Walk>();
     }
 
     public void addWalk(Walk w) {
@@ -168,8 +169,9 @@ public class Subject implements Serializable {
         }
     }
 
+    @Override
     public String toString() {
-        return "ID: " + this.id + " | Study: " + this.study;
+        return "Study: " + this.study + " | ID: " + this.id;
     }
 
     private int findObjectNum(int objNum, Walk w) {
@@ -179,6 +181,23 @@ public class Subject implements Serializable {
             }
         }
         return -1;
+    }
+    
+    /* Make subjects comparable. */
+    public int compareTo(Object other){
+        if(other instanceof Subject){
+            Subject osub = (Subject)other;
+            if(study.equals(osub.study)){
+                return id.compareTo(osub.id);
+            }
+            else{
+                return study.compareTo(osub.study);
+            }
+        }
+        // handle illegal comparison.
+        else{
+            return -1;
+        }
     }
 
 }
